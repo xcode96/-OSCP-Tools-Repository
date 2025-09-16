@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OSCP Tools Repository</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0d0d0d;
+      color: #f0f0f0;
+      padding: 20px;
+      line-height: 1.6;
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 30px 0;
+      border-bottom: 2px solid #00b374;
+    }
+
+    h1 {
+      color: #00e699;
+      font-size: 2.4rem;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #bbb;
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
+
+    .search {
+      width: 100%;
+      padding: 14px;
+      margin: 25px 0;
+      background: #1c1c1c;
+      border: 2px solid #00e699;
+      color: #fff;
+      font-size: 1rem;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .phase {
+      margin: 20px 0;
+      border: 1px solid #333;
+      border-radius: 8px;
+      background: #151515;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    }
+
+    .phase-header {
+      background: #1a1a1a;
+      padding: 16px 20px;
+      font-weight: 700;
+      color: #ffd700;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.2rem;
+    }
+
+    .phase-header:hover {
+      background: #222;
+    }
+
+    .phase-content {
+      padding: 0 20px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .phase.open .phase-content {
+      padding: 20px;
+      max-height: 3000px;
+    }
+
+    .category {
+      margin: 20px 0;
+      padding-left: 15px;
+      border-left: 3px solid #00b374;
+    }
+
+    .category h4 {
+      color: #ffd700;
+      margin: 0 0 10px 0;
+      font-size: 1.1rem;
+    }
+
+    .tool {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid #333;
+      position: relative;
+    }
+
+    .tool:last-child {
+      border-bottom: none;
+    }
+
+    .tool-info {
+      flex: 1;
+    }
+
+    .tool-name {
+      font-weight: 700;
+      color: #00e699;
+      font-size: 1.05rem;
+    }
+
+    .dup {
+      color: #ff6961;
+      font-weight: 700;
+      margin-left: 8px;
+      font-size: 0.95rem;
+    }
+
+    .desc {
+      color: #ccc;
+      margin-top: 6px;
+      font-size: 0.95rem;
+    }
+
+    .tool-actions {
+      display: flex;
+      gap: 8px;
+      margin-left: 16px;
+      flex-shrink: 0;
+    }
+
+    .btn {
+      background: #1e1e1e;
+      color: #00e699;
+      border: 1px solid #00e699;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: #00e699;
+      color: #000;
+    }
+
+    .btn.info {
+      color: #66ccff;
+      border-color: #66ccff;
+    }
+
+    .btn.info:hover {
+      background: #66ccff;
+      color: #000;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      padding: 40px 20px;
+      overflow: auto;
+    }
+
+    .modal-content {
+      background: #1a1a1a;
+      margin: auto;
+      padding: 30px;
+      border: 1px solid #00cc66;
+      border-radius: 8px;
+      max-width: 800px;
+      animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #fff;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #2a2a2a;
+      color: #aaa;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin: 2px 4px 2px 0;
+    }
+
+    .tag-phase {
+      background: #3a1a3a;
+      color: #ffd700;
+    }
+
+    .modal h2 {
+      color: #00e699;
+      margin-top: 0;
+    }
+
+    .modal p {
+      margin: 10px 0;
+    }
+
+    .modal-section {
+      margin: 20px 0;
+    }
+
+    .modal-section h3 {
+      color: #ffd700;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+    }
+
+    .tips {
+      background: #0f1f0f;
+      padding: 25px;
+      margin: 30px 0;
+      border: 1px solid #00cc66;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    .tips h3 {
+      color: #00cc66;
+      margin-top: 0;
+      font-size: 1.3rem;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      color: #777;
+      font-size: 0.9rem;
+      border-top: 1px solid #333;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      .phase-header {
+        font-size: 1.1rem;
+        padding: 14px 16px;
+      }
+      .tool-actions {
+        flex-direction: column;
+        margin-left: 0;
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📁 OSCP Tools Repository</h1>
+    <p class="subtitle">Curated for OSCP preparation — organized by attack workflow. All tools offline-ready.</p>
+  </header>
+
+  <input type="text" id="search" class="search" placeholder="🔍 Search tools, filenames, tags, or descriptions..." />
+
+  <div id="container"></div>
+
+  <div class="tips">
+    <h3>⚡ Usage Tips</h3>
+    <ul>
+      <li><strong>Start with 01_recon_enum</strong> — always scan before you attack.</li>
+      <li><strong>02_initial_access</strong> — exploit web, services, or client-side vectors.</li>
+      <li><strong>Active Directory?</strong> → Use 03 + 05 for enum and credential dumping.</li>
+      <li><strong>Privilege Escalation</strong> → 04 has separated Windows/Linux tools.</li>
+      <li><strong>Reverse Engineering?</strong> → 06_reverse_engineering/dnSpy for .NET apps.</li>
+      <li><em>Duplicates (↔) are intentional — placed where most contextually useful.</em></li>
+    </ul>
+  </div>
+
+  <!-- Modal without "Quick Command" section -->
+  <div id="infoModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="modalTitle">Tool Info</h2>
+      <div id="modalDescription"></div>
+      <div id="modalTags"></div>
+      <div id="modalPhase"></div>
+      <!-- ❌ "Quick Command" section REMOVED -->
+    </div>
+  </div>
+
+  <footer>
+    © 2025 OSCP Tools Repository — Works 100% Offline — No Tracking — No Bloat
+  </footer>
+
+  <script>
+    const modal = document.getElementById('infoModal');
+    const span = document.querySelector('.close');
+
+    // Global lookup for tool info by ID
+    const toolLookup = {};
+    let toolIdCounter = 0;
+
+    span.onclick = function() {
+      modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+    function showInfo(toolId) {
+      const tool = toolLookup[toolId];
+      if (!tool) return;
+
+      document.getElementById('modalTitle').textContent = tool.name;
+      document.getElementById('modalDescription').innerHTML = `<strong>Description:</strong> ${tool.detail || tool.desc}`;
+      
+      let tagsHtml = '<strong>Tags:</strong> ';
+      tagsHtml += tool.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+      document.getElementById('modalTags').innerHTML = tagsHtml;
+
+      document.getElementById('modalPhase').innerHTML = `<strong>Phase:</strong> <span class="tag tag-phase">${tool.phase}</span>`;
+
+      // ❌ No command handling — removed completely
+
+      modal.style.display = "block";
+    }
+
+    function downloadTool(filename) {
+      const filePath = `./tools/${filename}`;
+      const link = document.createElement('a');
+      link.href = filePath;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    const data = [
+      {
+        name: "01_recon_enum — Reconnaissance & Enumeration",
+        tools: [
+          {
+            cat: "wordlists/",
+            items: [
+              {
+                name: "big.txt",
+                desc: "Large general-purpose wordlist",
+                file: "big.txt",
+                detail: "A large, general-purpose wordlist containing common directory, file, and subdomain names. Often used as a fallback when more targeted lists fail.",
+                tags: ["wordlist", "bruteforce", "directories", "fallback", "general"],
+                phase: "01_recon_enum"
+              },
+              {
+                name: "common-snmp-community-strings-onesixtyone.txt",
+                desc: "Common SNMP community strings",
+                file: "common-snmp-community-strings-onesixtyone.txt",
+                detail: "List of commonly used SNMP community strings (like public, private, admin) used to brute-force SNMP services.",
+                tags: ["snmp", "bruteforce", "network", "enumeration", "community strings"],
+                phase: "01_recon_enum"
+              },
+              {
+                name: "common.txt",
+                desc: "Common directory & file names",
+                file: "common.txt",
+                detail: "Short, curated list of the most common web paths (e.g., /admin, /login, /config). Fast for quick scans.",
+                tags: ["wordlist", "web", "fast", "common paths", "quick enum"],
+                phase: "01_recon_enum"
+              },
+              {
+                name: "directory-list-2.3-medium.txt",
+                desc: "Medium-sized directory brute-force list",
+                file: "directory-list-2.3-medium.txt",
+                detail: "Medium-sized, well-known directory brute-force list from the DirBuster project. Balanced between speed and coverage.",
+                tags: ["wordlist", "dirbuster", "web enum", "medium", "oscp staple"],
+                phase: "01_recon_enum"
+              },
+              {
+                name: "raft-medium-files.txt",
+                desc: "RAFT list — medium file names",
+                file: "raft-medium-files.txt",
+                detail: "From the RAFT project — focused on file names (not directories), e.g., backup.zip, config.php, test.aspx.",
+                tags: ["wordlist", "files", "raft", "backup files", "source exposure"],
+                phase: "01_recon_enum"
+              },
+              {
+                name: "rockyou.txt.gz",
+                desc: "Famous password list (compressed)",
+                file: "rockyou.txt.gz",
+                detail: "Legendary password wordlist from the RockYou breach (2009). Contains 14+ million real-world passwords. Compressed to save space.",
+                tags: ["passwords", "rockyou", "cracking", "bruteforce", "credential attack"],
+                phase: "02_initial_access"
+              },
+              {
+                name: "subdomains-top1million-20000.txt",
+                desc: "Top 20K subdomains for enumeration",
+                file: "subdomains-top1million-20000.txt",
+                detail: "Top 20,000 most common subdomains (e.g., www, mail, dev, api, staging) from public DNS data.",
+                tags: ["subdomains", "dns", "vhost", "bruteforce", "recon"],
+                phase: "01_recon_enum"
+              },
+              {
+                name: "xato-net-10-million-usernames.txt",
+                desc: "10M common usernames for brute-force",
+                file: "xato-net-10-million-usernames.txt",
+                detail: "List of 10 million commonly used usernames (e.g., admin, test, user1, backup, svc_apache).",
+                tags: ["usernames", "spraying", "kerberos", "enum", "credential"],
+                phase: "01_recon_enum"
+              }
+            ]
+          },
+          {
+            cat: "network_utilities/",
+            items: [
+              {
+                name: "ncat",
+                desc: "Quick shell connections",
+                file: "ncat",
+                detail: "Modern Netcat from Nmap project — supports SSL, proxy, IPv6, and connection brokering.",
+                tags: ["netcat", "shell", "transfer", "tunnel", "nc"],
+                phase: "01_recon_enum"
+              },
+              {
+                name: "chisel.zip",
+                desc: "Port forwarding / pivoting",
+                file: "chisel.zip",
+                detail: "Fast TCP/UDP tunnel over HTTP, secured via SSH. Creates SOCKS proxies or port forwards through firewalls.",
+                tags: ["tunnel", "pivot", "socks", "proxy", "firewall bypass"],
+                phase: "01_recon_enum"
+              },
+              {
+                name: "ligolo",
+                desc: "Lateral movement proxy",
+                file: "ligolo.zip",
+                detail: "Lightweight, reverse tunneling tool for lateral movement. Creates encrypted tunnels for proxying traffic.",
+                tags: ["pivot", "tunnel", "proxy", "lateral movement", "ligolo-ng"],
+                phase: "01_recon_enum"
+              },
+              {
+                name: "PowerCat.ps1",
+                desc: "PowerShell netcat",
+                file: "PowerCat.ps1",
+                dup: "from 01_recon_enum",
+                detail: "PowerShell implementation of Netcat. Can listen, connect, transfer files, and execute commands.",
+                tags: ["powershell", "netcat", "reverse shell", "windows", "av evasion"],
+                phase: "01_recon_enum"
+              },
+              {
+                name: "PortKnocker.sh",
+                desc: "Port knocking script",
+                file: "PortKnocker.sh",
+                detail: "Bash script to perform port knocking — sending packets to closed ports in sequence to trigger hidden services.",
+                tags: ["port knocking", "stealth", "access", "script", "covert"],
+                phase: "01_recon_enum"
+              },
+              {
+                name: "windapsearch.py",
+                desc: "LDAP enumeration",
+                file: "windapsearch.py",
+                detail: "Python script to enumerate Active Directory via LDAP queries — users, groups, computers, SPNs.",
+                tags: ["ldap", "ad enum", "python", "lightweight", "enumeration"],
+                phase: "01_recon_enum"
+              },
+              {
+                name: "linpeas.sh",
+                desc: "Linux privilege enumeration",
+                file: "linpeas.sh",
+                dup: "from 04/linux",
+                detail: "Linux Privilege Escalation Awesome Script — automated enumeration of misconfigurations, credentials, exploits.",
+                tags: ["linux", "privesc", "enum", "automation", "peass"],
+                phase: "01_recon_enum"
+              },
+              {
+                name: "winpeasx64.exe",
+                desc: "Windows enumeration tool",
+                file: "winpeasx64.exe",
+                dup: "from 04/windows",
+                detail: "Windows Privilege Escalation Awesome Script — .exe version for easy execution on Windows targets.",
+                tags: ["windows", "privesc", "enum", "peass", "executable"],
+                phase: "01_recon_enum"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "02_initial_access — Gaining Initial Access",
+        tools: [
+          {
+            cat: "client_side_attacks/",
+            items: [
+              {
+                name: "exploit.lnk, payload.dll",
+                desc: "Malicious files for social engineering",
+                file: "client_side.zip",
+                detail: "Archive containing malicious LNK, SCF, or DLL files for client-side attacks (e.g., via SMB share or email).",
+                tags: ["client-side", "social engineering", "lnk", "dll", "phishing"],
+                phase: "02_initial_access"
+              }
+            ]
+          },
+          {
+            cat: "git_dumper/",
+            items: [
+              {
+                name: "gitdumper.sh",
+                desc: "Extract data from exposed .git repos",
+                file: "gitdumper.sh",
+                detail: "Part of git-tools — downloads and reconstructs exposed .git directories from web servers.",
+                tags: ["git", "source leak", "recon", "initial access", "git dumper"],
+                phase: "02_initial_access"
+              }
+            ]
+          },
+          {
+            cat: "cross_compiling/",
+            items: [
+              {
+                name: "adduser.c, evil.dll",
+                desc: "Source for compiling custom payloads",
+                file: "payloads.zip",
+                detail: "Source code (C, C#, etc.) for compiling custom payloads — e.g., adding users, reverse shells, or DLLs.",
+                tags: ["source", "compile", "custom", "bypass", "payload"],
+                phase: "02_initial_access"
+              }
+            ]
+          },
+          {
+            cat: "utils",
+            items: [
+              {
+                name: "PowerCat.ps1",
+                desc: "Reverse shell & tunneling",
+                file: "PowerCat.ps1",
+                dup: "from 01_recon_enum",
+                detail: "PowerShell implementation of Netcat. Can listen, connect, transfer files, and execute commands.",
+                tags: ["powershell", "netcat", "reverse shell", "windows", "av evasion"],
+                phase: "02_initial_access"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "03_active_directory — AD Enumeration & Exploitation",
+        tools: [
+          {
+            cat: "Enumeration Scripts",
+            items: [
+              {
+                name: "PowerView.ps1",
+                desc: "Active Directory reconnaissance",
+                file: "PowerView.ps1",
+                detail: "PowerShell script for comprehensive AD enumeration — users, groups, ACLs, trusts, GPOs.",
+                tags: ["powershell", "ad", "enum", "bloodhound", "powerview"],
+                phase: "03_active_directory"
+              },
+              {
+                name: "Get-SPN.ps1",
+                desc: "Enumerate Service Principal Names",
+                file: "Get-SPN.ps1",
+                detail: "Scripts to request Kerberos service tickets (SPNs) and crack them offline for passwords.",
+                tags: ["kerberoast", "spn", "tickets", "crack", "ad"],
+                phase: "03_active_directory"
+              },
+              {
+                name: "GetNPUsers.py",
+                desc: "Find AS-REP roastable users",
+                file: "GetNPUsers.py",
+                detail: "Impacket script to find AS-REP roastable users (no Kerberos pre-auth).",
+                tags: ["asrep roast", "impacket", "kerberos", "no preauth", "crack"],
+                phase: "03_active_directory"
+              }
+            ]
+          },
+          {
+            cat: "Exploitation Tools",
+            items: [
+              {
+                name: "SharpHound.exe",
+                desc: "Collect data for BloodHound",
+                file: "SharpHound.exe",
+                detail: ".NET collector for BloodHound — gathers AD relationships for graph-based attack path analysis.",
+                tags: ["bloodhound", "ad", "graph", "sharp", "collector"],
+                phase: "03_active_directory"
+              },
+              {
+                name: "SharpGPOAbuse.exe",
+                desc: "Abuse Group Policy Objects",
+                file: "SharpGPOAbuse.exe",
+                detail: "Tool to exploit Group Policy Object permissions for RCE or privilege escalation.",
+                tags: ["gpo", "abuse", "privesc", "rce", "sharp"],
+                phase: "03_active_directory"
+              }
+            ]
+          },
+          {
+            cat: "Credential Tools",
+            items: [
+              {
+                name: "mimikatz.exe",
+                desc: "Dump credentials from memory",
+                file: "mimikatz.exe",
+                dup: "from 05",
+                detail: "Swiss Army knife for Windows credential extraction — LSASS dump, tickets, hashes, DPAPI.",
+                tags: ["mimikatz", "credentials", "lsass", "hashes", "tickets"],
+                phase: "03_active_directory"
+              },
+              {
+                name: "Rubeus.exe",
+                desc: "Kerberos ticket manipulation",
+                file: "Rubeus.exe",
+                dup: "from 05",
+                detail: "C# tool for Kerberos interaction — request, abuse, and forge tickets (TGTs, TGS, Silver/Golden).",
+                tags: ["kerberos", "rubeus", "tickets", "ptt", "otp"],
+                phase: "03_active_directory"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "04_privilege_escalation — Privilege Escalation",
+        tools: [
+          {
+            cat: "windows/",
+            items: [
+              {
+                name: "PowerUp.ps1",
+                desc: "Automated Windows privilege escalation",
+                file: "PowerUp.ps1",
+                detail: "Automated Windows privilege escalation checker — finds misconfigurations, unquoted paths, weak services.",
+                tags: ["windows", "privesc", "automation", "powerup", "powershell"],
+                phase: "04_privilege_escalation"
+              },
+              {
+                name: "JuicyPotato.exe",
+                desc: "Exploit impersonation privileges",
+                file: "JuicyPotato.exe",
+                cat: "potatoes/",
+                detail: "Exploits SeImpersonate/SeAssignPrimaryToken privileges to escalate from service accounts to SYSTEM.",
+                tags: ["potato", "privesc", "windows", "impersonate", "clsid"],
+                phase: "04_privilege_escalation"
+              },
+              {
+                name: "winpeasx64.exe",
+                desc: "Comprehensive Windows enumeration",
+                file: "winpeasx64.exe",
+                dup: "from 01",
+                detail: "Windows Privilege Escalation Awesome Script — .exe version for easy execution on Windows targets.",
+                tags: ["windows", "privesc", "enum", "peass", "executable"],
+                phase: "04_privilege_escalation"
+              },
+              {
+                name: "chisel",
+                desc: "Tunneling for pivoting",
+                file: "chisel",
+                dup: "from 01",
+                detail: "Fast TCP/UDP tunnel over HTTP, secured via SSH. Creates SOCKS proxies or port forwards through firewalls.",
+                tags: ["tunnel", "pivot", "socks", "proxy", "firewall bypass"],
+                phase: "04_privilege_escalation"
+              }
+            ]
+          },
+          {
+            cat: "linux/",
+            items: [
+              {
+                name: "linpeas.sh",
+                desc: "All-in-one Linux enumeration script",
+                file: "linpeas.sh",
+                dup: "from 01",
+                detail: "Linux Privilege Escalation Awesome Script — automated enumeration of misconfigurations, credentials, exploits.",
+                tags: ["linux", "privesc", "enum", "automation", "peass"],
+                phase: "04_privilege_escalation"
+              },
+              {
+                name: "LinEnum.sh",
+                desc: "Classic Linux privilege escalation checker",
+                file: "LinEnum.sh",
+                detail: "Bash script for Linux privilege escalation enumeration — SUID, cron, processes, network, users.",
+                tags: ["linux", "privesc", "enum", "bash", "linenum"],
+                phase: "04_privilege_escalation"
+              }
+            ]
+          },
+          {
+            cat: "cross_platform/peas-utils",
+            items: [
+              {
+                name: "json2pdf.py",
+                desc: "Convert PEAS output to PDF",
+                file: "json2pdf.py",
+                detail: "Converts JSON output from linpeas/winpeas into searchable, formatted PDF reports.",
+                tags: ["report", "pdf", "json", "peas", "documentation"],
+                phase: "04_privilege_escalation"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "05_credentials_looting — Credential Extraction",
+        tools: [
+          {
+            cat: "Credential Dumpers",
+            items: [
+              {
+                name: "mimikatz.exe",
+                desc: "Extract passwords, hashes, tickets",
+                file: "mimikatz.exe",
+                dup: "also in 03 & 04",
+                detail: "Swiss Army knife for Windows credential extraction — LSASS dump, tickets, hashes, DPAPI.",
+                tags: ["mimikatz", "credentials", "lsass", "hashes", "tickets"],
+                phase: "05_credentials_looting"
+              },
+              {
+                name: "Rubeus.exe",
+                desc: "Request & abuse Kerberos tickets",
+                file: "Rubeus.exe",
+                dup: "also in 03",
+                detail: "C# tool for Kerberos interaction — request, abuse, and forge tickets (TGTs, TGS, Silver/Golden).",
+                tags: ["kerberos", "rubeus", "tickets", "ptt", "otp"],
+                phase: "05_credentials_looting"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        name: "06_reverse_engineering — Binary Analysis",
+        tools: [
+          {
+            cat: "Tools",
+            items: [
+              {
+                name: "dnSpy/",
+                desc: ".NET assembly browser, decompiler, debugger",
+                file: "dnSpy.zip",
+                dup: "also in 04/windows",
+                detail: ".NET assembly editor, decompiler, and debugger. Lets you modify and recompile .NET binaries.",
+                tags: ["reverse engineering", "dotnet", "decompile", "debug", "dnspy"],
+                phase: "06_reverse_engineering"
+              }
+            ]
+          }
+        ]
+      }
+    ];
+
+    const container = document.getElementById('container');
+    const search = document.getElementById('search');
+
+    function render() {
+      container.innerHTML = '';
+      data.forEach(phase => {
+        const el = document.createElement('div');
+        el.className = 'phase';
+        el.innerHTML = `
+          <div class="phase-header">${phase.name}</div>
+          <div class="phase-content"></div>
+        `;
+        const content = el.querySelector('.phase-content');
+        phase.tools.forEach(cat => {
+          let html = `<div class="category"><h4>${cat.cat}</h4>`;
+          cat.items.forEach(tool => {
+            const toolId = toolIdCounter++;
+            toolLookup[toolId] = tool;
+
+            html += `
+              <div class="tool">
+                <div class="tool-info">
+                  <div>
+                    <span class="tool-name">${tool.name}</span>
+                    ${tool.dup ? `<span class="dup">↔ ${tool.dup}</span>` : ''}
+                  </div>
+                  <div class="desc">${tool.desc}</div>
+                </div>
+                <div class="tool-actions">
+                  <button class="btn info" onclick="showInfo(${toolId})">ℹ️ Info</button>
+                  <button class="btn" onclick="downloadTool('${tool.file}')">⬇️ Download</button>
+                </div>
+              </div>
+            `;
+          });
+          html += `</div>`;
+          content.innerHTML += html;
+        });
+        el.querySelector('.phase-header').addEventListener('click', () => el.classList.toggle('open'));
+        container.appendChild(el);
+      });
+    }
+
+    search.addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll('.tool').forEach(el => {
+        const text = el.textContent.toLowerCase();
+        el.style.display = text.includes(q) ? 'flex' : 'none';
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
